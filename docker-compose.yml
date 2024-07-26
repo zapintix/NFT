@@ -14,15 +14,16 @@ services:
 
   minio:
     image: minio/minio
-    container_name: minio
-    volumes:
-      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
-    command: server /data
-    ports:
-      - "9000:9000"
+    volumes:
+      - ./data:/data
+    command: server /data --console-address ":9001"
+
 
   app:
     build:
@@ -43,8 +44,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: db
       DB_PORT: "5432"
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
       AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
       AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
 
