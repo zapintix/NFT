@@ -172,7 +172,6 @@ class CategoryDetailView(APIView):
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
-
 class BucketViewSet(APIView):
     def __init__(self):
         # Получаем параметры из окружения
@@ -209,3 +208,18 @@ class BucketViewSet(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def delele(self, request):
+        bucket_name = request.data.get('bucket_name')
+        if not bucket_name:
+            return Response({"error": "Имя бакета обязательно"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            objects = self.s3_client.list_objects_v2(Bucket=bucket_name)
+            if 'Contents' in objects:
+                delete_objects = {'Objects': [{'Key': obj['Key']} for obj in objects['Contents']]}
+                self.s3_client.delete_objects(Bucket=bucket_name, Delete=delete_objects)
+
+            self.s3_client.delete_bucket(Bucket=bucket_name)
+            return Response({"message": f"Бакет '{bucket_name}' успешно удален"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
