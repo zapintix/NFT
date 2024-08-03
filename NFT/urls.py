@@ -21,7 +21,7 @@ from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from store.views import NftViewSet, NftViewDetail, CategoryViewSet, CategoryDetailView
+from store.views import NftViewSet, NftViewDetail, CategoryViewSet, CategoryDetailView, BucketViewSet
 
 
 schema_view = get_schema_view(
@@ -38,6 +38,7 @@ urlpatterns = [
     path('api/v1/nft/<int:pk>', NftViewDetail.as_view()),
     path('api/v1/cats/', CategoryViewSet.as_view()),
     path('api/v1/cat/<int:pk>', CategoryDetailView.as_view()),
+    path('buckets/',  BucketViewSet.as_view()),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
