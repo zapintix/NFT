@@ -208,7 +208,7 @@ class BucketViewSet(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def delele(self, request):
+    def delete(self, request):
         bucket_name = request.data.get('bucket_name')
         if not bucket_name:
             return Response({"error": "Имя бакета обязательно"}, status=status.HTTP_400_BAD_REQUEST)
