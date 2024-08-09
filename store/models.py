@@ -7,6 +7,7 @@ class Nft(models.Model):
     typePrice = models.ForeignKey('TypePrice', on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to='product_image/', blank=True)
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, blank=True)
+    autor = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
