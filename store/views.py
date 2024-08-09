@@ -9,8 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
 from store.filters import NftFilter
-from store.models import Nft, Category
-from store.serializers import NftSerializer, CatSerializer
+from store.models import Nft, Category, TypePrice
+from store.serializers import NftSerializer, CatSerializer, TypePriceSerializer
 
 
 class NftPagination(PageNumberPagination):
@@ -223,3 +223,11 @@ class BucketViewSet(APIView):
             return Response({"message": f"Бакет '{bucket_name}' успешно удален"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TPrice(APIView):
+    def post(self, request):
+        serializer = TypePriceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

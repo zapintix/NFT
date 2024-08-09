@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from store.models import Nft, Category
+from store.models import Nft, Category, TypePrice
 
 
 class CatSerializer(ModelSerializer):
@@ -11,4 +11,10 @@ class CatSerializer(ModelSerializer):
 class NftSerializer(ModelSerializer):
     class Meta:
         model = Nft
+        fields = '__all__'
+
+
+class TypePriceSerializer(ModelSerializer):
+    class Meta:
+        modul = TypePrice
         fields = '__all__'
