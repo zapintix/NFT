@@ -36,7 +36,10 @@ class NftViewSet(APIView):
                               description='Минимальная цена'),
             openapi.Parameter('max_price', in_=openapi.IN_QUERY, type=openapi.TYPE_NUMBER,
                               description='Максимальная цена'),
-            openapi.Parameter('category', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, description='Категория')
+            openapi.Parameter('category', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, description='Категория'),
+            openapi.Parameter('page', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER, description='Номер страницы'),
+            openapi.Parameter('page_size', in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER,
+                              description='Размер страницы')
         ],
         responses={200: NftSerializer(many=True)}
     )
