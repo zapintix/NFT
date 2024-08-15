@@ -58,8 +58,30 @@ class NftViewSet(APIView):
 
     @swagger_auto_schema(
         operation_description="Создание нового NFT",
-        request_body=NftSerializer,
-        responses={201: NftSerializer}
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Название NFT'),
+                'price': openapi.Schema(type=openapi.TYPE_NUMBER, format=openapi.FORMAT_DECIMAL,
+                                        description='Цена NFT'),
+                'typePrice': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID типа цены'),
+                'cat': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID категории'),
+                'autor': openapi.Schema(type=openapi.TYPE_STRING, description='Автор NFT'),
+                'image': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_BINARY,
+                    description='Изображение NFT (файл)'
+                )
+            },
+            required=['name', 'price', 'typePrice', 'cat']
+        ),
+        responses={
+            201: openapi.Response(
+                description="Созданный NFT",
+                schema=NftSerializer
+            ),
+            400: "Bad Request"
+        }
     )
     def post(self, request):
         serializer = NftSerializer(data=request.data)
