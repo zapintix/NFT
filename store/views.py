@@ -198,7 +198,54 @@ class CategoryDetailView(APIView):
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
+class BucketViewSet(APIView):
+    def __init__(self):
+        # Получаем параметры из окружения
+        self.aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        self.aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        self.aws_s3_endpoint_url = os.getenv('AWS_S3_ENDPOINT_URL')
 
+        # Инициализируем клиент Boto3
+        self.s3_client = boto3.client(
+            's3',
+            endpoint_url=self.aws_s3_endpoint_url,
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key
+        )
 
+    @swagger_auto_schema(
+        operation_description="Создание нового бакета",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'bucket_name': openapi.Schema(type=openapi.TYPE_STRING, description='Имя нового бакета')
+            }
+        ),
+        responses={201: 'Бакет успешно создан', 400: 'Ошибка создания бакета'}
+    )
+    def post(self, request):
+        bucket_name = request.data.get('bucket_name')
+        if not bucket_name:
+            return Response({"error": "Имя бакета обязательно"}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            self.s3_client.create_bucket(Bucket=bucket_name)
+            return Response({"message": f"Бакет '{bucket_name}' успешно создан"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request):
+        bucket_name = request.data.get('bucket_name')
+        if not bucket_name:
+            return Response({"error": "Имя бакета обязательно"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            objects = self.s3_client.list_objects_v2(Bucket=bucket_name)
+            if 'Contents' in objects:
+                delete_objects = {'Objects': [{'Key': obj['Key']} for obj in objects['Contents']]}
+                self.s3_client.delete_objects(Bucket=bucket_name, Delete=delete_objects)
+
+            self.s3_client.delete_bucket(Bucket=bucket_name)
+            return Response({"message": f"Бакет '{bucket_name}' успешно удален"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
