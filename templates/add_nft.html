@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить NFT</title>
+</head>
+<body>
+    <h1>Добавить новое NFT</h1>
+    <form id="nftForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Название:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="price">Цена:</label>
+        <input type="number" id="price" name="price" step="0.01" required><br>
+
+        <label for="typePrice">Тип цены (ID):</label>
+        <input type="number" id="typePrice" name="typePrice" required><br>
+
+        <label for="cat">Категория (ID):</label>
+        <input type="number" id="cat" name="cat" required><br>
+
+        <label for="autor">Автор:</label>
+        <input type="text" id="autor" name="autor"><br>
+
+        <label for="image">Изображение:</label>
+        <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png"><br>
+
+        <button type="submit">Добавить NFT</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script src="{% static 'js/nft_form.js' %}"></script>
+</body>
+</html>
