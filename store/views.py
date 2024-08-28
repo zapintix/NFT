@@ -198,6 +198,29 @@ class CategoryDetailView(APIView):
         return Response("success", status=status.HTTP_204_NO_CONTENT)
 
 
+class TypePriceViewSet(APIView):
+    def get(self, request):
+        tp = TypePrice.objects.all()
+        serializer = TypePriceSerializer(tp, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TypePriceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TypePriceDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            tp = TypePrice.objects.get(pk=pk)
+        except TypePrice.DoesNotExist:
+            return Response({'error': 'Цена не найдена'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TypePriceSerializer(tp)
+        return Response(serializer.data)
+
+
 class BucketViewSet(APIView):
     def __init__(self):
         # Получаем параметры из окружения
