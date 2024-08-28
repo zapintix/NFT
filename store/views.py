@@ -1,7 +1,6 @@
 import os
 
 import boto3
-from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -218,6 +217,24 @@ class TypePriceDetailView(APIView):
         except TypePrice.DoesNotExist:
             return Response({'error': 'Цена не найдена'}, status=status.HTTP_404_NOT_FOUND)
         serializer = TypePriceSerializer(tp)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        try:
+            tp = TypePrice.objects.get(pk=pk)
+        except TypePrice.DoesNotExist:
+            return Response({'error': 'Цена не найдена'}, status=status.HTTP_404_NOT_FOUND)
+        tp.delete()
+        return Response("success", status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, pk):
+        try:
+            tp = TypePrice.objects.get(pk=pk)
+        except TypePrice.DoesNotExist:
+            return Response({'error': 'Цена не найдена'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TypePriceSerializer(tp, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
 
